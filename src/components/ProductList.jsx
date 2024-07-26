@@ -3,13 +3,23 @@ import data from "../database";
 import "../style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { add_item } from "../redux/reducer";
+
 function ProductList() {
-  // const [count, setCount] = useState(0);
   const dispatch = useDispatch();
-  const productCount = useSelector((state) => state.productCount);
+  const productCount = useSelector((state) => state.basket.productCount); // Correct state selection
+
   const handleAddCart = (product) => {
-    // setCount((item) => [++item], count);
-    dispatch({ type: `add_item`, payload: { ...product, quantity: 1 } });
+    if (product) {
+      dispatch(
+        add_item({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          quantity: 1,
+        })
+      );
+    }
   };
 
   useEffect(() => {}, [productCount]);
@@ -28,8 +38,7 @@ function ProductList() {
         {data.map((item) => (
           <li key={item.id}>
             <div className="div">
-              <p> {item.name}</p>
-
+              <p>{item.name}</p>
               <button
                 className="basket-button"
                 onClick={() => handleAddCart(item)}

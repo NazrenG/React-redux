@@ -2,19 +2,21 @@ import "../style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
 import Total from "./Total";
+import { remove_item, update_item } from "../redux/reducer";
+
 function Card() {
   const dispatch = useDispatch();
-  const cardItem = useSelector((state) => state.cart);
+  const cardItem = useSelector((state) => state.basket.cart); // Correct state selection
+
   const handleRemoveItem = (id) => {
     const product = cardItem.find((element) => element.id === id);
     if (product) {
       if (product.quantity > 1) {
-        dispatch({
-          type: "update_item",
-          payload: { id, quantity: product.quantity },
-        });
+        dispatch(
+          update_item({ id: product.id, quantity: product.quantity - 1 })
+        );
       } else {
-        dispatch({ type: "remove_item", payload: { id } });
+        dispatch(remove_item({ id: product.id }));
       }
     }
   };
@@ -42,7 +44,7 @@ function Card() {
           </li>
         ))}
       </ul>
-      <Total />{" "}
+      <Total />
     </div>
   );
 }

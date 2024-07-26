@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 function Total() {
-  const cardItem = useSelector((state) => state.cart);
-  const [total, setTotal] = useState();
+  const cardItem = useSelector((state) => state.basket.cart);
+  const [total, setTotal] = useState(0);
 
   const calculateTotalPrice = () => {
     let total = 0;

@@ -1,46 +1,44 @@
-const initialState = {
-  cart: [],
-  productCount: 0,
-};
+import { createSlice } from "@reduxjs/toolkit";
 
-const rootReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "add_item":
-      if (state.cart.find((item) => item.id === action.payload.id)) {
-        return {
-          ...state,
-          cart: state.cart.map((item) =>
-            item.id === action.payload.id
-              ? { ...item, quantity: item.quantity + action.payload.quantity }
-              : item
-          ),
-          productCount: state.productCount + action.payload.quantity,
-        };
+export const reducerSlice = createSlice({
+  name: "item",
+  initialState: {
+    cart: [], // Ensure this is cart
+    productCount: 0,
+  },
+  reducers: {
+    add_item: (state, action) => {
+      const existingItem = state.cart.find(
+        (item) => item.id === action.payload.id
+      );
+      if (existingItem) {
+        existingItem.quantity += action.payload.quantity;
       } else {
-        return {
-          ...state,
-          cart: [...state.cart, action.payload],
-          productCount: state.productCount + action.payload.quantity,
-        };
+        state.cart.push(action.payload);
       }
-    case "remove_item":
-      return {
-        ...state,
-        cart: state.cart.filter((item) => item.id !== action.payload.id),
-        productCount: state.productCount - 1,
-      };
-    case "update_item":
-      return {
-        ...state,
-        cart: state.cart.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, quantity: --action.payload.quantity }
-            : item
-        ),
-        productCount: state.productCount - 1,
-      };
-    default:
-      return state;
-  }
-};
-export default rootReducer;
+      state.productCount += action.payload.quantity;
+    },
+    remove_item: (state, action) => {
+      const existingItem = state.cart.find(
+        (item) => item.id === action.payload.id
+      );
+      if (existingItem) {
+        state.productCount -= existingItem.quantity;
+        state.cart = state.cart.filter((item) => item.id !== action.payload.id);
+      }
+    },
+    update_item: (state, action) => {
+      const existingItem = state.cart.find(
+        (item) => item.id === action.payload.id
+      );
+      if (existingItem) {
+        state.productCount -= existingItem.quantity;
+        existingItem.quantity = action.payload.quantity;
+        state.productCount += action.payload.quantity;
+      }
+    },
+  },
+});
+
+export const { add_item, remove_item, update_item } = reducerSlice.actions;
+export default reducerSlice.reducer;
